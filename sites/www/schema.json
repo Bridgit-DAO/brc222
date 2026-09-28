@@ -1,0 +1,33 @@
+{
+  "@context": {
+    "@vocab": "https://brc222.org/schema#",
+    "OrdinalBridge": "https://brc222.org/schema#OrdinalBridge",
+    "ValidationEntry": "https://brc222.org/schema#ValidationEntry",
+    "TextQuoteSelector": "https://brc222.org/schema#TextQuoteSelector",
+    "from": { "@id": "https://brc222.org/schema#from", "@type": "@id" },
+    "to": { "@id": "https://brc222.org/schema#to", "@type": "@id" },
+    "direction": "https://brc222.org/schema#direction",
+    "relationship": "https://brc222.org/schema#relationship",
+    "explanation": "https://brc222.org/schema#explanation",
+    "validation": { "@id": "https://brc222.org/schema#validation", "@container": "@set" },
+    "blockchain": "https://brc222.org/schema#blockchain",
+    "content": "https://brc222.org/schema#content",
+    "metadata": "https://brc222.org/schema#metadata",
+    "validator": "https://brc222.org/schema#validator",
+    "timestamp": "https://brc222.org/schema#timestamp",
+    "signature": "https://brc222.org/schema#signature",
+    "exact": "https://brc222.org/schema#exact",
+    "prefix": "https://brc222.org/schema#prefix",
+    "suffix": "https://brc222.org/schema#suffix"
+  },
+  "@type": "DefinedTermSet",
+  "name": "BRC-222 OrdinalBridge JSON-LD Schema",
+  "description": "Decentralized format for linking digital content across platforms and blockchains with semantic relationships.",
+  "url": "https://brc222.org/",
+  "maintainer": {
+    "@type": "Organization",
+    "name": "Bridgit DAO / Overweb Team",
+    "email": "info@bridgit.io"
+  },
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/"
+}

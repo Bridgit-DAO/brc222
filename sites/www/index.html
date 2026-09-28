@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>BRC-222 JSON-LD Schema | brc222.org</title>
+  <meta name="description" content="BRC-222 JSON-LD schema for OrdinalBridge: typed, verifiable relationships between web content and Bitcoin ordinals.">
+  <link rel="canonical" href="https://brc222.org/">
+  <link rel="alternate" type="application/ld+json" href="/schema.json">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/">brc222</a>
+    <nav aria-label="Primary">
+      <a href="/">Schema</a>
+      <a href="/schema.json">JSON</a>
+      <a href="https://bridgit.io">Bridgit</a>
+    </nav>
+  </header>
+
+  <main id="main">
+<style>
+  .brc-schema {
+    font-family: 'Segoe UI', sans-serif;
+    background: #fdfdfd;
+    color: #333;
+    max-width: 900px;
+    margin: 2em auto;
+    padding: 2em;
+    font-size: 16px;
+    line-height: 1.6;
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.05);
+  }
+  .brc-schema h1, .brc-schema h2, .brc-schema h3 {
+    color: #1a1a1a;
+    margin-top: 1.5em;
+  }
+  .brc-schema pre {
+    background: #f4f4f4;
+    padding: 1em;
+    border-radius: 6px;
+    overflow-x: auto;
+  }
+  .brc-schema code {
+    background: #eef;
+    padding: 2px 5px;
+    border-radius: 4px;
+  }
+  .brc-schema ul, .brc-schema li {
+    margin-left: 1.2em;
+  }
+  .brc-schema a {
+    color: #065dd8;
+  }
+</style>
+
+<div class="brc-schema">
+  <h1>BRC-222 JSON-LD Schema</h1>
+  <p><strong>Schema URL:</strong> <code>https://brc222.org/schema</code></p>
+  <p>This document defines the JSON-LD schema for BRC-222 bridges, a decentralized format for linking digital content across platforms and blockchains with semantic relationships.</p>
+
+  <h2>@context</h2>
+  <pre><code>"@context": "https://brc222.org/schema"</code></pre>
+  <p>Defines the schema namespace for BRC-222 compliant objects. Machine-readable context: <a href="/schema.json">/schema.json</a>.</p>
+
+  <h2>Root Object</h2>
+  <pre><code>{
+  "@type": "OrdinalBridge",
+  "@id": "bitcoin:inscription:[inscriptionId]",
+  "from": { ... },
+  "to": { ... },
+  "direction": "from-to",
+  "relationship": "cites",
+  "explanation": "...",
+  "validation": [ ... ]
+}</code></pre>
+
+  <h3>Fields:</h3>
+  <ul>
+    <li><code>@type</code> (string): Fixed value "OrdinalBridge"</li>
+    <li><code>@id</code> (string): Unique identifier using blockchain-inscription format (e.g., <code>bitcoin:inscription:abc123</code>). This is dynamically assigned at the time of inscription.</li>
+    <li><code>from</code> (object): Describes the source artifact</li>
+    <li><code>to</code> (object): Describes the target artifact</li>
+    <li><code>direction</code> (string): Direction of relationship. Values: <code>from-to</code>, <code>to-from</code></li>
+    <li><code>relationship</code> (string): Semantic link type. Values include: <code>cites</code>, <code>supports</code>, <code>contradicts</code>, <code>refutes</code>, <code>amplifies</code>, <code>contextualizes</code></li>
+    <li><code>explanation</code> (string): Human-readable explanation</li>
+    <li><code>validation</code> (array): List of third-party attestations</li>
+  </ul>
+
+  <h2>from / to Object Structure</h2>
+  <pre><code>{
+  "@type": "WebPage" | "Video" | "Image" | "Audio" | "DigitalArtifact" | "Inscription" | "Sat" | "Claim",
+  "@id": "https://example.com" | "bitcoin:inscription:xyz",
+  "blockchain": "bitcoin" | "ethereum" | "polygon" | "dogecoin",
+  "content": {
+    "@type": "TextQuoteSelector",
+    "exact": "The quoted content",
+    "prefix": "text before",
+    "suffix": "text after"
+  },
+  "metadata": {
+    "title": "Optional title",
+    "author": "Author or creator",
+    "datePublished": "ISO 8601 date"
+  }
+}</code></pre>
+
+  <h3>Notes:</h3>
+  <ul>
+    <li><code>@type</code> defines content type</li>
+    <li><code>@id</code> is the unique URL or blockchain reference</li>
+    <li><code>blockchain</code> identifies the chain the content resides on</li>
+    <li><code>content</code> supports sub-targeting within a resource</li>
+    <li><code>metadata</code> provides optional contextual descriptors</li>
+  </ul>
+
+  <h2>TextQuoteSelector</h2>
+  <pre><code>{
+  "@type": "TextQuoteSelector",
+  "exact": "Selected text",
+  "prefix": "Before text",
+  "suffix": "After text"
+}</code></pre>
+  <p>Supports precise text selection and resilience to minor text changes.</p>
+
+  <h2>Validation Entry</h2>
+  <pre><code>{
+  "@type": "ValidationEntry",
+  "validator": "https://organization.org/profile.json",
+  "timestamp": "2025-05-25T12:34:56Z",
+  "signature": "..."
+}</code></pre>
+  <p>Optional entries signed by third-party validators to affirm the bridge.</p>
+
+  <h2>Licensing</h2>
+  <p>Content and schema are open under <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a>.</p>
+
+  <h2>Maintainers</h2>
+  <p>Bridgit DAO / Overweb Team – <a href="mailto:info@bridgit.io">info@bridgit.io</a></p>
+</div>
+  </main>
+
+  <footer class="site-footer">
+    <p>&copy; Bridgit DAO. Contact: <a href="mailto:info@bridgit.io">info@bridgit.io</a></p>
+  </footer>
+</body>
+</html>
