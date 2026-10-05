@@ -2,15 +2,41 @@
   "@context": {
     "@vocab": "https://brc222.org/schema#",
     "OrdinalBridge": "https://brc222.org/schema#OrdinalBridge",
+    "CrosswalkBridge": "https://brc222.org/schema#CrosswalkBridge",
+    "KnowledgeGraphNode": "https://brc222.org/schema#KnowledgeGraphNode",
     "ValidationEntry": "https://brc222.org/schema#ValidationEntry",
     "TextQuoteSelector": "https://brc222.org/schema#TextQuoteSelector",
-    "from": { "@id": "https://brc222.org/schema#from", "@type": "@id" },
-    "to": { "@id": "https://brc222.org/schema#to", "@type": "@id" },
+    "from": {
+      "@id": "https://brc222.org/schema#from",
+      "@type": "@id"
+    },
+    "to": {
+      "@id": "https://brc222.org/schema#to",
+      "@type": "@id"
+    },
     "direction": "https://brc222.org/schema#direction",
     "relationship": "https://brc222.org/schema#relationship",
     "explanation": "https://brc222.org/schema#explanation",
-    "validation": { "@id": "https://brc222.org/schema#validation", "@container": "@set" },
+    "match": {
+      "@id": "https://brc222.org/schema#match",
+      "@type": "@vocab"
+    },
+    "exactMatch": "http://www.w3.org/2004/02/skos/core#exactMatch",
+    "closeMatch": "http://www.w3.org/2004/02/skos/core#closeMatch",
+    "broadMatch": "http://www.w3.org/2004/02/skos/core#broadMatch",
+    "narrowMatch": "http://www.w3.org/2004/02/skos/core#narrowMatch",
+    "relatedMatch": "http://www.w3.org/2004/02/skos/core#relatedMatch",
+    "validation": {
+      "@id": "https://brc222.org/schema#validation",
+      "@container": "@set"
+    },
     "blockchain": "https://brc222.org/schema#blockchain",
+    "graph": {
+      "@id": "https://brc222.org/schema#graph",
+      "@type": "@id"
+    },
+    "identifier": "https://brc222.org/schema#identifier",
+    "label": "https://brc222.org/schema#label",
     "content": "https://brc222.org/schema#content",
     "metadata": "https://brc222.org/schema#metadata",
     "validator": "https://brc222.org/schema#validator",
@@ -29,5 +55,24 @@
     "name": "Bridgit DAO / Overweb Team",
     "email": "info@bridgit.io"
   },
-  "license": "https://creativecommons.org/publicdomain/zero/1.0/"
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "version": "1.1.0",
+  "dateModified": "2026-10-05",
+  "relationshipTypes": [
+    "cites",
+    "supports",
+    "corroborates",
+    "contradicts",
+    "refutes",
+    "amplifies",
+    "contextualizes",
+    "is-member-of"
+  ],
+  "crosswalkMatchTypes": [
+    "exactMatch",
+    "closeMatch",
+    "broadMatch",
+    "narrowMatch",
+    "relatedMatch"
+  ]
 }

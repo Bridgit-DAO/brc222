@@ -54,12 +54,39 @@
   .brc-schema a {
     color: #065dd8;
   }
+  .brc-schema .table-wrap {
+    overflow-x: auto;
+  }
+  .brc-schema table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1em 0;
+  }
+  .brc-schema th, .brc-schema td {
+    text-align: left;
+    vertical-align: top;
+    padding: 0.5em 0.75em;
+    border-bottom: 1px solid #e3e3e3;
+  }
+  .brc-schema th {
+    background: #f4f4f4;
+  }
+  .brc-schema .note {
+    font-size: 0.9em;
+    color: #555;
+  }
 </style>
 
 <div class="brc-schema">
   <h1>BRC-222 JSON-LD Schema</h1>
   <p><strong>Schema URL:</strong> <code>https://brc222.org/schema</code></p>
   <p>This document defines the JSON-LD schema for BRC-222 bridges, a decentralized format for linking digital content across platforms and blockchains with semantic relationships.</p>
+  <p>BRC-222 defines two kinds of bridge:</p>
+  <ul>
+    <li><strong>Content bridges</strong> (<code>OrdinalBridge</code>) link a passage or region in one piece of content to another, with a typed <a href="#relationships">relationship</a>.</li>
+    <li><strong>Crosswalk bridges</strong> (<code>CrosswalkBridge</code>) link a node in one knowledge graph to the matching node in another, so the two graphs can be traversed as one map. See <a href="#crosswalk">Crosswalk Bridges</a>.</li>
+  </ul>
+  <p class="note">Version 1.1.0 (2026-10-05): adds <code>corroborates</code>, <code>is-member-of</code> and crosswalk bridges.</p>
 
   <h2>@context</h2>
   <pre><code>"@context": "https://brc222.org/schema"</code></pre>
@@ -80,14 +107,32 @@
   <h3>Fields:</h3>
   <ul>
     <li><code>@type</code> (string): Fixed value "OrdinalBridge"</li>
-    <li><code>@id</code> (string): Unique identifier using blockchain-inscription format (e.g., <code>bitcoin:inscription:abc123</code>). This is dynamically assigned at the time of inscription.</li>
+    <li><code>@id</code> (string): Unique identifier. For an inscribed bridge this is the inscription (e.g., <code>bitcoin:inscription:abc123</code>), assigned at the time of inscription. Inscription is optional; a bridge that is not inscribed uses any stable IRI, such as its registry URL.</li>
     <li><code>from</code> (object): Describes the source artifact</li>
     <li><code>to</code> (object): Describes the target artifact</li>
     <li><code>direction</code> (string): Direction of relationship. Values: <code>from-to</code>, <code>to-from</code></li>
-    <li><code>relationship</code> (string): Semantic link type. Values include: <code>cites</code>, <code>supports</code>, <code>contradicts</code>, <code>refutes</code>, <code>amplifies</code>, <code>contextualizes</code></li>
+    <li><code>relationship</code> (string): Semantic link type. One of the <a href="#relationships">canonical relationships</a>: <code>cites</code>, <code>supports</code>, <code>corroborates</code>, <code>contradicts</code>, <code>refutes</code>, <code>amplifies</code>, <code>contextualizes</code>, <code>is-member-of</code></li>
     <li><code>explanation</code> (string): Human-readable explanation</li>
     <li><code>validation</code> (array): List of third-party attestations</li>
   </ul>
+
+  <h2 id="relationships">Relationship Types</h2>
+  <p>The canonical relationships, shared by BRC-222 and the Bridge Registry. Read each one as "<code>from</code> <em>relationship</em> <code>to</code>" when <code>direction</code> is <code>from-to</code>.</p>
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>Value</th><th>Meaning</th></tr></thead>
+    <tbody>
+      <tr><td><code>cites</code></td><td>The source quotes or references the target.</td></tr>
+      <tr><td><code>supports</code></td><td>The source provides evidence or argument in favour of the target.</td></tr>
+      <tr><td><code>corroborates</code></td><td>The source independently confirms the target, such as a second account of the same fact.</td></tr>
+      <tr><td><code>contradicts</code></td><td>The source is in tension with, or inconsistent with, the target.</td></tr>
+      <tr><td><code>refutes</code></td><td>The source shows the target to be false.</td></tr>
+      <tr><td><code>amplifies</code></td><td>The source extends, elaborates or gives more reach to the target.</td></tr>
+      <tr><td><code>contextualizes</code></td><td>The source adds background needed to understand the target.</td></tr>
+      <tr><td><code>is-member-of</code></td><td>The source belongs to the collection, series, set or group the target describes.</td></tr>
+    </tbody>
+  </table>
+  </div>
 
   <h2>from / to Object Structure</h2>
   <pre><code>{
@@ -132,7 +177,57 @@
   "timestamp": "2025-05-25T12:34:56Z",
   "signature": "..."
 }</code></pre>
-  <p>Optional entries signed by third-party validators to affirm the bridge.</p>
+  <p>Signed attestations from verifiers. Verification covers two things: that each end (each context anchor) points to the content it claims, and that the relationship holds. Each entry records who verified the bridge and when. Entries are optional; a bridge with none is unverified.</p>
+
+  <h2 id="crosswalk">Crosswalk Bridges</h2>
+  <p>A crosswalk bridge links a node in one knowledge graph to the matching node in another, for example a Wikidata item and the matching record in a library or scientific database. Crosswalks connect entities rather than passages, so their ends are <code>KnowledgeGraphNode</code> objects and their link is a <code>match</code> rather than a <code>relationship</code>.</p>
+  <pre><code>{
+  "@context": "https://brc222.org/schema",
+  "@type": "CrosswalkBridge",
+  "@id": "bitcoin:inscription:[inscriptionId]",
+  "from": {
+    "@type": "KnowledgeGraphNode",
+    "@id": "http://www.wikidata.org/entity/Q1035",
+    "graph": "https://www.wikidata.org/",
+    "identifier": "Q1035",
+    "label": "Charles Darwin"
+  },
+  "to": {
+    "@type": "KnowledgeGraphNode",
+    "@id": "http://id.loc.gov/authorities/names/n78095637",
+    "graph": "https://id.loc.gov/authorities/names/",
+    "identifier": "n78095637",
+    "label": "Darwin, Charles, 1809-1882"
+  },
+  "direction": "from-to",
+  "match": "exactMatch",
+  "explanation": "Both nodes describe the naturalist Charles Darwin (1809-1882).",
+  "validation": [ ... ]
+}</code></pre>
+
+  <h3>Fields:</h3>
+  <ul>
+    <li><code>@type</code> (string): Fixed value "CrosswalkBridge"</li>
+    <li><code>@id</code>, <code>direction</code>, <code>explanation</code>, <code>validation</code>: As for <code>OrdinalBridge</code>.</li>
+    <li><code>from</code> / <code>to</code> (object): A <code>KnowledgeGraphNode</code> in each graph.</li>
+    <li><code>match</code> (string): How closely the two nodes correspond. Values: <code>exactMatch</code>, <code>closeMatch</code>, <code>broadMatch</code>, <code>narrowMatch</code>, <code>relatedMatch</code>. These map to the <a href="https://www.w3.org/TR/skos-reference/#mapping" target="_blank" rel="noopener noreferrer">SKOS mapping properties</a> of the same names, so a crosswalk can be read as a SKOS mapping. Defaults to <code>exactMatch</code> when omitted.</li>
+  </ul>
+
+  <h3>KnowledgeGraphNode</h3>
+  <pre><code>{
+  "@type": "KnowledgeGraphNode",
+  "@id": "https://graph.example.org/entity/123",
+  "graph": "https://graph.example.org/",
+  "identifier": "123",
+  "label": "Human-readable name"
+}</code></pre>
+  <ul>
+    <li><code>@id</code> (string, required): The node's dereferenceable IRI in its own graph.</li>
+    <li><code>graph</code> (string, required): IRI identifying the knowledge graph, dataset or authority file the node belongs to.</li>
+    <li><code>identifier</code> (string, optional): The node's local identifier within that graph (e.g., a Wikidata Q-number).</li>
+    <li><code>label</code> (string, optional): A human-readable name, so the crosswalk can be checked without dereferencing either IRI.</li>
+  </ul>
+  <p>Verification of a crosswalk checks that each <code>@id</code> resolves to a node in the stated <code>graph</code> and that the <code>match</code> holds.</p>
 
   <h2>Licensing</h2>
   <p>Content and schema are open under <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a>.</p>

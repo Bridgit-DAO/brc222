@@ -16,6 +16,7 @@ mkdir -p "$DOCROOT"
 rsync -a --delete \
   --exclude='._*' \
   --exclude='.DS_Store' \
+  --exclude='.well-known/' \
   "$SOURCE/" "$DOCROOT/"
 
 echo "deploy complete: www -> $DOCROOT"
