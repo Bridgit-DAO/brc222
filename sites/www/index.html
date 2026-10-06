@@ -86,7 +86,7 @@
     <li><strong>Content bridges</strong> (<code>OrdinalBridge</code>) link a passage or region in one piece of content to another, with a typed <a href="#relationships">relationship</a>.</li>
     <li><strong>Crosswalk bridges</strong> (<code>CrosswalkBridge</code>) link a node in one knowledge graph to the matching node in another, so the two graphs can be traversed as one map. See <a href="#crosswalk">Crosswalk Bridges</a>.</li>
   </ul>
-  <p class="note">Version 1.1.0 (2026-10-05): adds <code>corroborates</code>, <code>is-member-of</code> and crosswalk bridges.</p>
+  <p class="note">Version 1.1.1 (2026-10-06): crosswalk <code>match</code> is required and crosswalks carry no <code>direction</code>. Version 1.1.0 (2026-10-05): adds <code>corroborates</code>, <code>is-member-of</code> and crosswalk bridges.</p>
 
   <h2>@context</h2>
   <pre><code>"@context": "https://brc222.org/schema"</code></pre>
@@ -199,7 +199,6 @@
     "identifier": "n78095637",
     "label": "Darwin, Charles, 1809-1882"
   },
-  "direction": "from-to",
   "match": "exactMatch",
   "explanation": "Both nodes describe the naturalist Charles Darwin (1809-1882).",
   "validation": [ ... ]
@@ -208,9 +207,10 @@
   <h3>Fields:</h3>
   <ul>
     <li><code>@type</code> (string): Fixed value "CrosswalkBridge"</li>
-    <li><code>@id</code>, <code>direction</code>, <code>explanation</code>, <code>validation</code>: As for <code>OrdinalBridge</code>.</li>
+    <li><code>@id</code>, <code>explanation</code>, <code>validation</code>: As for <code>OrdinalBridge</code>.</li>
     <li><code>from</code> / <code>to</code> (object): A <code>KnowledgeGraphNode</code> in each graph.</li>
-    <li><code>match</code> (string): How closely the two nodes correspond. Values: <code>exactMatch</code>, <code>closeMatch</code>, <code>broadMatch</code>, <code>narrowMatch</code>, <code>relatedMatch</code>. These map to the <a href="https://www.w3.org/TR/skos-reference/#mapping" target="_blank" rel="noopener noreferrer">SKOS mapping properties</a> of the same names, so a crosswalk can be read as a SKOS mapping. Defaults to <code>exactMatch</code> when omitted.</li>
+    <li><code>match</code> (string, required): How closely the two nodes correspond, read as "<code>from</code> <em>match</em> <code>to</code>". Values: <code>exactMatch</code>, <code>closeMatch</code>, <code>broadMatch</code> (<code>from</code> is broader than <code>to</code>), <code>narrowMatch</code> (<code>from</code> is narrower than <code>to</code>), <code>relatedMatch</code>. These map to the <a href="https://www.w3.org/TR/skos-reference/#mapping" target="_blank" rel="noopener noreferrer">SKOS mapping properties</a> of the same names, so a crosswalk can be read as a SKOS mapping. There is no default: the strength of the match is part of what verifiers attest to.</li>
+    <li>Crosswalk bridges have no <code>direction</code> field. Exact, close and related matches are symmetric, and broad and narrow matches are each other's inverse, so the order of <code>from</code> and <code>to</code> plus the <code>match</code> value says everything. Swap the ends and a <code>broadMatch</code> becomes a <code>narrowMatch</code>.</li>
   </ul>
 
   <h3>KnowledgeGraphNode</h3>
