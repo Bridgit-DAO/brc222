@@ -86,7 +86,7 @@
     <li><strong>Content bridges</strong> (<code>OrdinalBridge</code>) link a passage or region in one piece of content to another, with a typed <a href="#relationships">relationship</a>.</li>
     <li><strong>Crosswalk bridges</strong> (<code>CrosswalkBridge</code>) link a node in one knowledge graph to the matching node in another, so the two graphs can be traversed as one map. See <a href="#crosswalk">Crosswalk Bridges</a>.</li>
   </ul>
-  <p class="note">Version 1.1.1 (2026-10-06): crosswalk <code>match</code> is required and crosswalks carry no <code>direction</code>. Version 1.1.0 (2026-10-05): adds <code>corroborates</code>, <code>is-member-of</code> and crosswalk bridges.</p>
+  <p class="note">Version 1.2.0 (2026-10-06): adds <code>extends</code> and narrows <code>amplifies</code> to repetition and reach. Version 1.1.1 (2026-10-06): crosswalk <code>match</code> is required and crosswalks carry no <code>direction</code>. Version 1.1.0 (2026-10-05): adds <code>corroborates</code>, <code>is-member-of</code> and crosswalk bridges.</p>
 
   <h2>@context</h2>
   <pre><code>"@context": "https://brc222.org/schema"</code></pre>
@@ -111,7 +111,7 @@
     <li><code>from</code> (object): Describes the source artifact</li>
     <li><code>to</code> (object): Describes the target artifact</li>
     <li><code>direction</code> (string): Direction of relationship. Values: <code>from-to</code>, <code>to-from</code></li>
-    <li><code>relationship</code> (string): Semantic link type. One of the <a href="#relationships">canonical relationships</a>: <code>cites</code>, <code>supports</code>, <code>corroborates</code>, <code>contradicts</code>, <code>refutes</code>, <code>amplifies</code>, <code>contextualizes</code>, <code>is-member-of</code></li>
+    <li><code>relationship</code> (string): Semantic link type. One of the <a href="#relationships">canonical relationships</a>: <code>cites</code>, <code>supports</code>, <code>corroborates</code>, <code>contradicts</code>, <code>refutes</code>, <code>extends</code>, <code>amplifies</code>, <code>contextualizes</code>, <code>is-member-of</code></li>
     <li><code>explanation</code> (string): Human-readable explanation</li>
     <li><code>validation</code> (array): List of third-party attestations</li>
   </ul>
@@ -127,7 +127,8 @@
       <tr><td><code>corroborates</code></td><td>The source independently confirms the target, such as a second account of the same fact.</td></tr>
       <tr><td><code>contradicts</code></td><td>The source is in tension with, or inconsistent with, the target.</td></tr>
       <tr><td><code>refutes</code></td><td>The source shows the target to be false.</td></tr>
-      <tr><td><code>amplifies</code></td><td>The source extends, elaborates or gives more reach to the target.</td></tr>
+      <tr><td><code>extends</code></td><td>The source builds on the target, taking its idea, method or finding further.</td></tr>
+      <tr><td><code>amplifies</code></td><td>The source repeats or spreads the target, giving it more reach, whether or not it adds anything.</td></tr>
       <tr><td><code>contextualizes</code></td><td>The source adds background needed to understand the target.</td></tr>
       <tr><td><code>is-member-of</code></td><td>The source belongs to the collection, series, set or group the target describes.</td></tr>
     </tbody>

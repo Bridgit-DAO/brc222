@@ -56,7 +56,7 @@
     "email": "info@bridgit.io"
   },
   "license": "https://creativecommons.org/publicdomain/zero/1.0/",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "dateModified": "2026-10-06",
   "relationshipTypes": [
     "cites",
@@ -64,6 +64,7 @@
     "corroborates",
     "contradicts",
     "refutes",
+    "extends",
     "amplifies",
     "contextualizes",
     "is-member-of"
