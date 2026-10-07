@@ -62,15 +62,16 @@ Read each as "`from` *relationship* `to`". Full definitions for both forms: http
 - `amplifies`: reach and repetition depend on audience size and the author's process, neither of which is in the passages. Spread is shown by *counting* `isCitedBy` bridges on a source.
 - `contextualizes`: "background needed to understand" is subjective and became a catch-all. `qualifies` is sharper.
 - `timeline`, `related`, `relates to`: they named no specific relationship. `related` holds between any two things, so it cannot be verified.
+- `isContradictedBy` / "contradicted by": contradiction is mutual, so `contradicts` is symmetric and has no passive form. There is no alias for the old passive spelling.
 
 ### The one algorithm every consumer needs
 
-Normalise the input (lower-case, keep only letters and digits), look it up among every `name`, `inverse` and alias in the vocabulary, and get back the canonical name plus whether it was the inverse. If it was, **swap `from` and `to`** (URL, anchor, content type, hash) before storing or comparing.
+Normalise the input (lower-case, keep only letters and digits), look it up among every `name`, `inverse` and alias in the vocabulary, and get back the canonical name plus whether it was the inverse. If it was, **swap `from` and `to`** (URL, anchor, content type, hash) before storing or comparing. A symmetric relationship (`contradicts`) is its own inverse and never reports a swap.
 
 ```python
 import re
 def norm(s): return re.sub(r"[^a-z0-9]", "", (s or "").lower())
-# lookup: norm(key) -> (canonical_name, swapped), built from each entry's name, inverse, aliases, inverseAliases
+# lookup: norm(key) -> (canonical_name, swapped), built from each entry's name, inverse (absent when symmetric), aliases, inverseAliases
 name, swapped = lookup[norm(raw)]        # KeyError / None => reject with 400
 if swapped: src, dst = dst, src
 ```
@@ -117,9 +118,9 @@ Link entities, not passages. Ends are `KnowledgeGraphNode` (`@id`, `graph`, opti
 
 **Reading.** Registry: `GET /api/v1/bridges` (filters `relationship` (either form), `status`, `source_hash`, `target_hash`, `limit`, `offset`), `GET /api/v1/bridges/<id>?format=jsonld` for the BRC-222 form, `GET /api/v1/bridges/export` for NDJSON bulk export (`?since=<ISO>`). The public address is **read-only**: writes are refused at nginx because the registry's `POST` has no authentication yet. A filter or write with an unknown relationship returns 400 listing every accepted name.
 
-**Writing.** Go through Canopi. Send any accepted form of the relationship; it is stored canonically with the ends swapped if needed. A request that carries `direction` is rejected. The registry fills itself from Canopi's public feed (incremental sync every 15 minutes, plus an hourly reconcile that adds missing and removes no-longer-public bridges). Only bridges Canopi already shows publicly are synced.
+**Writing.** Go through Canopi. Send any accepted form of the relationship; it is stored canonically with the ends swapped if needed. A request that carries `direction` is rejected, with any value. In Canopi's bridge panel a person says what they mean in either of two ways: pick the **inverse form** of the relationship (the picker shows each pair side by side), or **swap** the two anchors (a Swap control, shown once both are chosen; the panel reads "Source *relationship* Target" so the statement is plain before submitting). Both end up as the same stored bridge. The registry fills itself from Canopi's public feed (incremental sync every 15 minutes, plus an hourly reconcile that adds missing and removes no-longer-public bridges). Only bridges Canopi already shows publicly are synced.
 
-**Displaying.** Show a bridge **in the voice of the page it appears on**: "supported by B" on the claim, "supports A" on the evidence; use `label` / `inverseLabel`. Do not show raw identifiers. To show how far a claim spread, count `isCitedBy` bridges on its source.
+**Displaying.** Show a bridge **in the voice of the page it appears on**: "supported by B" on the claim, "supports A" on the evidence; use `label` / `inverseLabel`; a symmetric relationship shows the same label on both. Do not show raw identifiers. To show how far a claim spread, count `isCitedBy` bridges on its source.
 
 ## 8. Status (2026-10-07) and known gaps
 
@@ -136,7 +137,8 @@ The decisions are recorded in the Metaweb second-edition plan (D23, D28, D29; a 
 ## 9. Do and don't
 
 - **Do** vendor `vocabulary.json` and resolve through it; **do** swap the ends for inverse forms; **do** treat unknown names as errors.
-- **Don't** hardcode relationship names, invent new ones outside the vocabulary, or reintroduce `direction`, `amplifies`, `contextualizes`, `timeline` or `related`.
+- **Don't** hardcode relationship names, invent new ones outside the vocabulary, or reintroduce `direction`, `amplifies`, `contextualizes`, `isContradictedBy`, `timeline` or `related`.
+- **Don't** tolerate `direction` for "older clients". There are none worth keeping, and silently ignoring `to-from` would invert a bridge's meaning.
 - **Don't** treat a bridge as proof. It is a *claim* that one passage relates to another; it is verified only when it carries attestations.
 - **Don't** put personal data in a bridge or inscribe one without the author's consent: inscription is public and permanent.
 
