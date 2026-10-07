@@ -56,7 +56,7 @@ Every relationship is an **inverse pair**, or is **symmetric** (its own inverse,
 
 Read each as "`from` *relationship* `to`". Full definitions for both forms: https://brc222.org/#relationships.
 
-**Why these and not others.** A relationship is in the list only if a verifier can judge it **from the two anchored passages and their dates alone**. The set escalates on two axes: `supports` gives evidence for, `corroborates` adds that the evidence is *independent*; `contradicts` says two passages conflict without saying who is right, `refutes` says one is false, with evidence. `qualifies` says the target holds, but not as broadly as stated.
+**Why these and not others.** A relationship is in the list only if a verifier can judge it **from the two anchored passages and their dates alone**. The set escalates on two axes. Positive: `supports` gives evidence for; `corroborates` adds that the evidence is *independent*; `confirms` adds that it is *conclusive* (a primary record, a replication, a decisive check). Negative: `contradicts` says two passages conflict without saying who is right; `refutes` says one is false, with evidence. Independence and conclusiveness are different things: one primary record can confirm without being independent corroboration, and two blogs can corroborate each other without confirming anything. `qualifies` says the target holds, but not as broadly as stated.
 
 **Retired, and why.** Do not add these back, and reject them on input:
 
