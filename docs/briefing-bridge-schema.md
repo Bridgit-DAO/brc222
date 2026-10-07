@@ -81,7 +81,7 @@ const hit = lookup.get(norm(raw));      // { name, swapped } or undefined => rej
 if (hit?.swapped) [src, dst] = [dst, src];
 ```
 
-Matching ignores case and punctuation, so `is-supported-by`, `Is Supported By` and `isSupportedBy` are the same. Aliases (for example the old Canopi labels "supported by", "contradicted by") are accepted on input only and never output.
+Matching ignores case and punctuation, so `is-supported-by`, `Is Supported By` and `isSupportedBy` are the same. Aliases (for example the old Canopi label "supported by") are accepted on input only and never output. The old "contradicted by" is not an alias: `contradicts` is symmetric and accepts only its own name.
 
 ## 4. The vocabulary is data: do not hardcode names
 

@@ -52,10 +52,7 @@
       "label": "contradicts",
       "definition": "The source and the target are in tension, or inconsistent with each other. It does not say which of the two is right. It reads the same from either end.",
       "iri": "https://brc222.org/schema#contradicts",
-      "aliases": [
-        "contradictedBy",
-        "isContradictedBy"
-      ]
+      "aliases": []
     },
     {
       "name": "isRefutedBy",
