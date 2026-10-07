@@ -46,6 +46,7 @@ Every relationship is an **inverse pair**, or is **symmetric** (its own inverse,
 | `cites` | `isCitedBy` | The source quotes or references the target. | CiTO |
 | `isSupportedBy` | `supports` | The target gives evidence or argument in favour of the source, which is typically a claim. The target need not be independent of it. | CiTO |
 | `isCorroboratedBy` | `corroborates` | The target independently confirms the source: a separate account, dataset or investigation reaching the same result. | BRC-222 |
+| `isConfirmedBy` | `confirms` | The target settles the source as true: a primary record, a replication or a decisive check. It is conclusive, which supports and corroborates are not. | CiTO |
 | `contradicts` | *(symmetric)* | The source and the target are in tension, or inconsistent with each other. It does not say which of the two is right. It reads the same from either end. | BRC-222 |
 | `isRefutedBy` | `refutes` | The target shows the source to be false, with evidence. | CiTO |
 | `isQualifiedBy` | `qualifies` | The target limits, conditions or distinguishes the source: it holds, but not as broadly or as simply as stated. | CiTO |

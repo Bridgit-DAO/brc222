@@ -1,5 +1,5 @@
 {
-  "version": "2.0.0",
+  "version": "2.1.0",
   "dateModified": "2026-10-07",
   "namespace": "https://brc222.org/schema#",
   "about": "BRC-222 relationship vocabulary. The single source of truth: brc222.org's schema and page are generated from it (tools/build-vocabulary.py), and the Bridge Registry and Canopi vendor a copy. Each entry is an inverse pair, or a symmetric relationship that is its own inverse (symmetric: true, no inverse fields). 'A <name> B' and 'B <inverse> A' are the same bridge; it is stored in the canonical form, the entry's name, with the claim or described thing as the source. A symmetric relationship reads the same from either end. Aliases are accepted on input only (matching ignores case and punctuation) and are never output.",
@@ -43,6 +43,20 @@
       "inverseIri": "https://brc222.org/schema#corroborates",
       "aliases": [
         "corroboratedBy"
+      ],
+      "inverseAliases": []
+    },
+    {
+      "name": "isConfirmedBy",
+      "label": "confirmed by",
+      "definition": "The target settles the source as true: a primary record, a replication or a decisive check. It is conclusive, which supports and corroborates are not.",
+      "inverse": "confirms",
+      "inverseLabel": "confirms",
+      "inverseDefinition": "The source settles the target as true: a primary record, a replication or a decisive check. It is conclusive, which supports and corroborates are not.",
+      "iri": "http://purl.org/spar/cito/isConfirmedBy",
+      "inverseIri": "http://purl.org/spar/cito/confirms",
+      "aliases": [
+        "confirmedBy"
       ],
       "inverseAliases": []
     },

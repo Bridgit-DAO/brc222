@@ -25,6 +25,8 @@
     "supports": "http://purl.org/spar/cito/supports",
     "isCorroboratedBy": "https://brc222.org/schema#isCorroboratedBy",
     "corroborates": "https://brc222.org/schema#corroborates",
+    "isConfirmedBy": "http://purl.org/spar/cito/isConfirmedBy",
+    "confirms": "http://purl.org/spar/cito/confirms",
     "contradicts": "https://brc222.org/schema#contradicts",
     "isRefutedBy": "http://purl.org/spar/cito/isRefutedBy",
     "refutes": "http://purl.org/spar/cito/refutes",
@@ -81,6 +83,6 @@
     "relatedMatch"
   ],
   "vocabulary": "https://brc222.org/vocabulary.json",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "dateModified": "2026-10-07"
 }
