@@ -124,10 +124,10 @@ Link entities, not passages. Ends are `KnowledgeGraphNode` (`@id`, `graph`, opti
 
 ## 8. Status (2026-10-07) and known gaps
 
-The decisions are recorded in the Metaweb second-edition plan (D23, D28, D29; a D30 for the pairs change, and the matching Chapter 11 wording, are still to be written).
+The decisions are recorded in the Metaweb second-edition plan (D23, D28, D29; a D30 for the pairs change and the matching Chapter 11 wording are still to be written).
 
-- **Live:** BRC-222 **2.0.0** (spec, schema, `vocabulary.json`).
-- **In flight (pull requests open, not yet merged or deployed):** the Bridge Registry change (`Bridgit-DAO/bridge-registry#8`: inverse pairs, `direction` removed, in-place database migration) and Canopi's matching change (`Bridgit-DAO/canopi#164`: server, public feed, extension picker). Until both ship, the registry and Canopi still speak the previous 1.x vocabulary (`supports`, `contradicts`, `is-member-of`, `direction`), so **their live output does not yet match this briefing**. Deploy order: registry first, then Canopi. The extension's new picker reaches users with its next release; the web embed picks it up on deploy.
+- **Live and consistent:** BRC-222 **2.0.0** (spec, schema, `vocabulary.json`); the **Bridge Registry** (restarted on the merged code, public API read-only); **Canopi** (server, public feed, and the web embed's bridge panel with the pair picker and Swap control); the registry's sync from Canopi's feed. Both stored bridges read `contradicts` everywhere: the registry, the feed and Canopi's statistics.
+- **Not yet live:** the Chrome extension's new picker and Swap control, which reach extension users with its next release. Until then, an older extension that sends a retired name (`contextualizes`, `contradicted by`) or a `direction` gets a 400.
 - **No deduplication yet.** Two submissions of the same bridge are two records, even though "the same bridge from either end" is the model. A uniqueness rule on (from anchor, relationship, to anchor) is the obvious next step.
 - **Symmetric relationships and deduplication.** `contradicts` is symmetric, so "A contradicts B" and "B contradicts A" are the same bridge; a future uniqueness rule must treat both orders as one (for example by ordering the two anchors). `corroborates` is logically symmetric too but is still modelled as a pair.
 - **Registry writes are unauthenticated**, hence read-only public access.
