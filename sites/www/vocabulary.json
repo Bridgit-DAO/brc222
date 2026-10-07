@@ -104,7 +104,7 @@
     },
     {
       "name": "isMemberOf",
-      "label": "member of",
+      "label": "is a member of",
       "definition": "The source belongs to the collection, series, set or group the target describes.",
       "inverse": "hasMember",
       "inverseLabel": "has member",
