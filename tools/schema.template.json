@@ -15,26 +15,6 @@
       "@type": "@id"
     },
     "explanation": "https://brc222.org/schema#explanation",
-    "relationship": {
-      "@id": "https://brc222.org/schema#relationship",
-      "@type": "@vocab"
-    },
-    "cites": "http://purl.org/spar/cito/cites",
-    "isCitedBy": "http://purl.org/spar/cito/isCitedBy",
-    "isSupportedBy": "http://purl.org/spar/cito/isSupportedBy",
-    "supports": "http://purl.org/spar/cito/supports",
-    "isCorroboratedBy": "https://brc222.org/schema#isCorroboratedBy",
-    "corroborates": "https://brc222.org/schema#corroborates",
-    "isContradictedBy": "https://brc222.org/schema#isContradictedBy",
-    "contradicts": "https://brc222.org/schema#contradicts",
-    "isRefutedBy": "http://purl.org/spar/cito/isRefutedBy",
-    "refutes": "http://purl.org/spar/cito/refutes",
-    "isQualifiedBy": "http://purl.org/spar/cito/isQualifiedBy",
-    "qualifies": "http://purl.org/spar/cito/qualifies",
-    "extends": "http://purl.org/spar/cito/extends",
-    "isExtendedBy": "http://purl.org/spar/cito/isExtendedBy",
-    "isMemberOf": "https://brc222.org/schema#isMemberOf",
-    "hasMember": "https://brc222.org/schema#hasMember",
     "match": {
       "@id": "https://brc222.org/schema#match",
       "@type": "@vocab"
@@ -81,7 +61,5 @@
     "narrowMatch",
     "relatedMatch"
   ],
-  "vocabulary": "https://brc222.org/vocabulary.json",
-  "version": "2.0.0",
-  "dateModified": "2026-10-07"
+  "vocabulary": "https://brc222.org/vocabulary.json"
 }

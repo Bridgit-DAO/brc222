@@ -86,7 +86,7 @@
     <li><strong>Content bridges</strong> (<code>OrdinalBridge</code>) link a passage or region in one piece of content to another, with a typed <a href="#relationships">relationship</a>.</li>
     <li><strong>Crosswalk bridges</strong> (<code>CrosswalkBridge</code>) link a node in one knowledge graph to the matching node in another, so the two graphs can be traversed as one map. See <a href="#crosswalk">Crosswalk Bridges</a>.</li>
   </ul>
-  <p class="note">Version 1.3.0 (2026-10-07): removes <code>amplifies</code>; whether one text gave another more reach cannot be judged from the passages themselves, and spread is better shown by counting <code>cites</code> bridges. Version 1.2.0 (2026-10-06): adds <code>extends</code>. Version 1.1.1 (2026-10-06): crosswalk <code>match</code> is required and crosswalks carry no <code>direction</code>. Version 1.1.0 (2026-10-05): adds <code>corroborates</code>, <code>is-member-of</code> and crosswalk bridges.</p>
+  <p class="note">Version 2.0.0 (2026-10-07). Relationships come in inverse pairs, and <code>direction</code> is gone. See the <a href="#changelog">changelog</a>.</p>
 
   <h2>@context</h2>
   <pre><code>"@context": "https://brc222.org/schema"</code></pre>
@@ -98,7 +98,6 @@
   "@id": "bitcoin:inscription:[inscriptionId]",
   "from": { ... },
   "to": { ... },
-  "direction": "from-to",
   "relationship": "cites",
   "explanation": "...",
   "validation": [ ... ]
@@ -110,29 +109,31 @@
     <li><code>@id</code> (string): Unique identifier. For an inscribed bridge this is the inscription (e.g., <code>bitcoin:inscription:abc123</code>), assigned at the time of inscription. Inscription is optional; a bridge that is not inscribed uses any stable IRI, such as its registry URL.</li>
     <li><code>from</code> (object): Describes the source artifact</li>
     <li><code>to</code> (object): Describes the target artifact</li>
-    <li><code>direction</code> (string): Direction of relationship. Values: <code>from-to</code>, <code>to-from</code></li>
-    <li><code>relationship</code> (string): Semantic link type. One of the <a href="#relationships">canonical relationships</a>: <code>cites</code>, <code>supports</code>, <code>corroborates</code>, <code>contradicts</code>, <code>refutes</code>, <code>extends</code>, <code>contextualizes</code>, <code>is-member-of</code></li>
+    <li><code>relationship</code> (string): Semantic link type, one of the names in the <a href="#relationships">relationship table</a>, either form of a pair. Expands to an IRI, using <a href="http://purl.org/spar/cito/" target="_blank" rel="noopener noreferrer">CiTO</a> where its meaning matches.</li>
     <li><code>explanation</code> (string): Human-readable explanation</li>
     <li><code>validation</code> (array): List of third-party attestations</li>
   </ul>
 
   <h2 id="relationships">Relationship Types</h2>
-  <p>The canonical relationships, shared by BRC-222 and the Bridge Registry. Read each one as "<code>from</code> <em>relationship</em> <code>to</code>" when <code>direction</code> is <code>from-to</code>. Every relationship can be judged from the two anchored passages and their dates alone; that is what verifiers attest to.</p>
+  <p>Every relationship comes as an <strong>inverse pair</strong>. "A <code>isSupportedBy</code> B" and "B <code>supports</code> A" are the same bridge, written from opposite ends, so a bridge can be constructed from either end. There is no direction field. A bridge is stored and published in its <strong>canonical form</strong>, the first column, with the claim (or the thing being described) as <code>from</code>; an input in the inverse form is turned around. Each page then shows the bridge in its own voice: "supported by B" on the claim, "supports A" on the evidence.</p>
+  <p>Every relationship can be judged from the two anchored passages and their dates alone; that is what verifiers attest to. The relationships escalate: <code>supports</code> gives evidence for, <code>corroborates</code> adds that the evidence is independent; <code>contradicts</code> says two passages conflict without saying who is right, <code>refutes</code> says one is false, with evidence.</p>
+  <!-- vocabulary:table:start -->
   <div class="table-wrap">
   <table>
-    <thead><tr><th>Value</th><th>Meaning</th></tr></thead>
+    <thead><tr><th>Canonical</th><th>Meaning</th><th>Inverse</th><th>Meaning of the inverse</th></tr></thead>
     <tbody>
-      <tr><td><code>cites</code></td><td>The source quotes or references the target.</td></tr>
-      <tr><td><code>supports</code></td><td>The source provides evidence or argument in favour of the target.</td></tr>
-      <tr><td><code>corroborates</code></td><td>The source independently confirms the target, such as a second account of the same fact.</td></tr>
-      <tr><td><code>contradicts</code></td><td>The source is in tension with, or inconsistent with, the target.</td></tr>
-      <tr><td><code>refutes</code></td><td>The source shows the target to be false.</td></tr>
-      <tr><td><code>extends</code></td><td>The source builds on the target, taking its idea, method or finding further.</td></tr>
-      <tr><td><code>contextualizes</code></td><td>The source adds background needed to understand the target.</td></tr>
-      <tr><td><code>is-member-of</code></td><td>The source belongs to the collection, series, set or group the target describes.</td></tr>
+      <tr><td><code>cites</code></td><td>The source quotes or references the target.</td><td><code>isCitedBy</code></td><td>The source is quoted or referenced by the target.</td></tr>
+      <tr><td><code>isSupportedBy</code></td><td>The target gives evidence or argument in favour of the source, which is typically a claim. The target need not be independent of it.</td><td><code>supports</code></td><td>The source gives evidence or argument in favour of the target. The source need not be independent of it.</td></tr>
+      <tr><td><code>isCorroboratedBy</code></td><td>The target independently confirms the source: a separate account, dataset or investigation reaching the same result.</td><td><code>corroborates</code></td><td>The source independently confirms the target: a separate account, dataset or investigation reaching the same result.</td></tr>
+      <tr><td><code>isContradictedBy</code></td><td>The target is in tension with, or inconsistent with, the source. It does not say which of the two is right.</td><td><code>contradicts</code></td><td>The source is in tension with, or inconsistent with, the target. It does not say which of the two is right.</td></tr>
+      <tr><td><code>isRefutedBy</code></td><td>The target shows the source to be false, with evidence.</td><td><code>refutes</code></td><td>The source shows the target to be false, with evidence.</td></tr>
+      <tr><td><code>isQualifiedBy</code></td><td>The target limits, conditions or distinguishes the source: it holds, but not as broadly or as simply as stated.</td><td><code>qualifies</code></td><td>The source limits, conditions or distinguishes the target: it holds, but not as broadly or as simply as stated.</td></tr>
+      <tr><td><code>extends</code></td><td>The source builds on the target, taking its idea, method or finding further.</td><td><code>isExtendedBy</code></td><td>The source&#x27;s idea, method or finding is taken further by the target.</td></tr>
+      <tr><td><code>isMemberOf</code></td><td>The source belongs to the collection, series, set or group the target describes.</td><td><code>hasMember</code></td><td>The source is a collection, series, set or group that includes the target.</td></tr>
     </tbody>
   </table>
   </div>
+  <!-- vocabulary:table:end -->
 
   <h2>from / to Object Structure</h2>
   <pre><code>{
@@ -210,7 +211,7 @@
     <li><code>@id</code>, <code>explanation</code>, <code>validation</code>: As for <code>OrdinalBridge</code>.</li>
     <li><code>from</code> / <code>to</code> (object): A <code>KnowledgeGraphNode</code> in each graph.</li>
     <li><code>match</code> (string, required): How closely the two nodes correspond, read as "<code>from</code> <em>match</em> <code>to</code>". Values: <code>exactMatch</code>, <code>closeMatch</code>, <code>broadMatch</code> (<code>from</code> is broader than <code>to</code>), <code>narrowMatch</code> (<code>from</code> is narrower than <code>to</code>), <code>relatedMatch</code>. These map to the <a href="https://www.w3.org/TR/skos-reference/#mapping" target="_blank" rel="noopener noreferrer">SKOS mapping properties</a> of the same names, so a crosswalk can be read as a SKOS mapping. There is no default: the strength of the match is part of what verifiers attest to.</li>
-    <li>Crosswalk bridges have no <code>direction</code> field. Exact, close and related matches are symmetric, and broad and narrow matches are each other's inverse, so the order of <code>from</code> and <code>to</code> plus the <code>match</code> value says everything. Swap the ends and a <code>broadMatch</code> becomes a <code>narrowMatch</code>.</li>
+    <li>Crosswalk matches follow the same principle as relationship pairs: swap the ends and a <code>broadMatch</code> becomes a <code>narrowMatch</code>, while exact, close and related matches read the same either way.</li>
   </ul>
 
   <h3>KnowledgeGraphNode</h3>
@@ -228,6 +229,15 @@
     <li><code>label</code> (string, optional): A human-readable name, so the crosswalk can be checked without dereferencing either IRI.</li>
   </ul>
   <p>Verification of a crosswalk checks that each <code>@id</code> resolves to a node in the stated <code>graph</code> and that the <code>match</code> holds.</p>
+
+  <h2 id="changelog">Changelog</h2>
+  <ul>
+    <li><strong>2.0.0</strong> (2026-10-07): relationships come in inverse pairs (<code>isSupportedBy</code> and <code>supports</code> are one bridge); <code>direction</code> removed; <code>contextualizes</code> replaced by <code>qualifies</code> / <code>isQualifiedBy</code>; <code>corroborates</code> and <code>contradicts</code> gain inverses; <code>is-member-of</code> becomes <code>isMemberOf</code>; <code>relationship</code> expands to an IRI (CiTO where it matches); the vocabulary is published at <a href="/vocabulary.json">/vocabulary.json</a>. Breaking.</li>
+    <li><strong>1.3.0</strong> (2026-10-07): removed <code>amplifies</code>; whether one text gave another more reach cannot be judged from the passages themselves.</li>
+    <li><strong>1.2.0</strong> (2026-10-06): added <code>extends</code>.</li>
+    <li><strong>1.1.1</strong> (2026-10-06): crosswalk <code>match</code> required; crosswalks carry no <code>direction</code>.</li>
+    <li><strong>1.1.0</strong> (2026-10-05): added <code>corroborates</code>, <code>is-member-of</code> and crosswalk bridges.</li>
+  </ul>
 
   <h2>Licensing</h2>
   <p>Content and schema are open under <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a>.</p>
