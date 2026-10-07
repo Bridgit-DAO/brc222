@@ -25,7 +25,6 @@
     "supports": "http://purl.org/spar/cito/supports",
     "isCorroboratedBy": "https://brc222.org/schema#isCorroboratedBy",
     "corroborates": "https://brc222.org/schema#corroborates",
-    "isContradictedBy": "https://brc222.org/schema#isContradictedBy",
     "contradicts": "https://brc222.org/schema#contradicts",
     "isRefutedBy": "http://purl.org/spar/cito/isRefutedBy",
     "refutes": "http://purl.org/spar/cito/refutes",

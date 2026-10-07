@@ -38,11 +38,12 @@ Machine-readable schema: `https://brc222.org/schema` (JSON-LD context)
 
 `sites/www/vocabulary.json` (published at https://brc222.org/vocabulary.json) is the single source of truth for bridge relationships. Each entry is an **inverse pair** (`isSupportedBy` / `supports`); "A isSupportedBy B" and "B supports A" are the same bridge, stored once in the canonical form (the entry's `name`). There is no direction field.
 
-`schema.json` and the table on the page are **generated** from it. Don't edit them by hand.
+`schema.json`, the table on the page and the table in `docs/briefing-bridge-schema.md` are **generated** from it. Don't edit them by hand.
 
 ### Adding a relationship
 
 1. Add an entry to `sites/www/vocabulary.json`: `name` (canonical), `inverse`, `label`/`inverseLabel`, both definitions, both IRIs (use a [CiTO](http://purl.org/spar/cito/) IRI when the meaning matches, otherwise `https://brc222.org/schema#<name>`), and `aliases` / `inverseAliases` for alternative spellings accepted on input. Bump `version` and `dateModified`.
+   A relationship that reads the same from either end (like `contradicts`) is **symmetric**: give it `"symmetric": true` and only `name`, `label`, `definition`, `iri` and `aliases`. It is its own inverse and has no inverse fields.
 2. `python3 tools/build-vocabulary.py` (it refuses duplicate names, alias collisions and reused IRIs). `--check` verifies the generated files are current.
 3. `bash deploy-www.sh`, then commit.
 4. Pull the new file into the consumers, which vendor a copy and need no code change:

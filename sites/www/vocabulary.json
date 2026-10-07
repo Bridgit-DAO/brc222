@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "dateModified": "2026-10-07",
   "namespace": "https://brc222.org/schema#",
-  "about": "BRC-222 relationship vocabulary. The single source of truth: brc222.org's schema and page are generated from it (tools/build-vocabulary.py), and the Bridge Registry and Canopi vendor a copy. Each entry is an inverse pair. 'A <name> B' and 'B <inverse> A' are the same bridge; it is stored in the canonical form, the entry's name, with the claim or described thing as the source. Aliases are accepted on input only (matching ignores case and punctuation) and are never output.",
+  "about": "BRC-222 relationship vocabulary. The single source of truth: brc222.org's schema and page are generated from it (tools/build-vocabulary.py), and the Bridge Registry and Canopi vendor a copy. Each entry is an inverse pair, or a symmetric relationship that is its own inverse (symmetric: true, no inverse fields). 'A <name> B' and 'B <inverse> A' are the same bridge; it is stored in the canonical form, the entry's name, with the claim or described thing as the source. A symmetric relationship reads the same from either end. Aliases are accepted on input only (matching ignores case and punctuation) and are never output.",
   "relationships": [
     {
       "name": "cites",
@@ -47,18 +47,15 @@
       "inverseAliases": []
     },
     {
-      "name": "isContradictedBy",
-      "label": "contradicted by",
-      "definition": "The target is in tension with, or inconsistent with, the source. It does not say which of the two is right.",
-      "inverse": "contradicts",
-      "inverseLabel": "contradicts",
-      "inverseDefinition": "The source is in tension with, or inconsistent with, the target. It does not say which of the two is right.",
-      "iri": "https://brc222.org/schema#isContradictedBy",
-      "inverseIri": "https://brc222.org/schema#contradicts",
+      "name": "contradicts",
+      "symmetric": true,
+      "label": "contradicts",
+      "definition": "The source and the target are in tension, or inconsistent with each other. It does not say which of the two is right. It reads the same from either end.",
+      "iri": "https://brc222.org/schema#contradicts",
       "aliases": [
-        "contradictedBy"
-      ],
-      "inverseAliases": []
+        "contradictedBy",
+        "isContradictedBy"
+      ]
     },
     {
       "name": "isRefutedBy",

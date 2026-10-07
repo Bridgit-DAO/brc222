@@ -38,18 +38,20 @@ There are two kinds:
 
 ## 3. Relationships: inverse pairs
 
-Every relationship is an **inverse pair**. **"A R B" and "B inverse(R) A" are the same bridge**, written from opposite ends, so a bridge can be constructed from either end. It is stored **once**, in the **canonical form** (the first column), with the claim as `from`.
+Every relationship is an **inverse pair**, or is **symmetric** (its own inverse, because it reads the same from either end; only `contradicts` today). **"A R B" and "B inverse(R) A" are the same bridge**, written from opposite ends, so a bridge can be constructed from either end. It is stored **once**, in the **canonical form** (the first column), with the claim as `from`. A symmetric relationship needs no swap: "A contradicts B" is "B contradicts A".
 
+<!-- vocabulary:briefing-table:start -->
 | Canonical | Inverse | Canonical form means | Maps to |
 |---|---|---|---|
 | `cites` | `isCitedBy` | The source quotes or references the target. | CiTO |
 | `isSupportedBy` | `supports` | The target gives evidence or argument in favour of the source, which is typically a claim. The target need not be independent of it. | CiTO |
 | `isCorroboratedBy` | `corroborates` | The target independently confirms the source: a separate account, dataset or investigation reaching the same result. | BRC-222 |
-| `isContradictedBy` | `contradicts` | The target is in tension with, or inconsistent with, the source. It does not say which of the two is right. | BRC-222 |
+| `contradicts` | *(symmetric)* | The source and the target are in tension, or inconsistent with each other. It does not say which of the two is right. It reads the same from either end. | BRC-222 |
 | `isRefutedBy` | `refutes` | The target shows the source to be false, with evidence. | CiTO |
 | `isQualifiedBy` | `qualifies` | The target limits, conditions or distinguishes the source: it holds, but not as broadly or as simply as stated. | CiTO |
 | `extends` | `isExtendedBy` | The source builds on the target, taking its idea, method or finding further. | CiTO |
 | `isMemberOf` | `hasMember` | The source belongs to the collection, series, set or group the target describes. | BRC-222 |
+<!-- vocabulary:briefing-table:end -->
 
 Read each as "`from` *relationship* `to`". Full definitions for both forms: https://brc222.org/#relationships.
 
@@ -83,7 +85,7 @@ Matching ignores case and punctuation, so `is-supported-by`, `Is Supported By` a
 
 ## 4. The vocabulary is data: do not hardcode names
 
-`https://brc222.org/vocabulary.json` is the **single source of truth**. The schema (`/schema`) and the table on the page are generated from it. Each entry holds: `name`, `inverse`, `label`, `inverseLabel`, both definitions, both IRIs, and `aliases` / `inverseAliases`.
+`https://brc222.org/vocabulary.json` is the **single source of truth**. The schema (`/schema`) and the table on the page are generated from it. Each entry holds: `name`, `inverse`, `label`, `inverseLabel`, both definitions, both IRIs, and `aliases` / `inverseAliases`. A symmetric entry has `"symmetric": true` and only `name`, `label`, `definition`, `iri` and `aliases`; it has no inverse fields.
 
 - **Vendor a copy** and drive validation, UI, error messages and filters from it. The Bridge Registry and Canopi both do. Nothing in their code names a relationship, so adding one is a new JSON entry.
 - Each vendored copy needs a `--check` that fails when it falls behind the published file.
@@ -126,7 +128,7 @@ The decisions are recorded in the Metaweb second-edition plan (D23, D28, D29; a 
 - **Live:** BRC-222 **2.0.0** (spec, schema, `vocabulary.json`).
 - **In flight (pull requests open, not yet merged or deployed):** the Bridge Registry change (`Bridgit-DAO/bridge-registry#8`: inverse pairs, `direction` removed, in-place database migration) and Canopi's matching change (`Bridgit-DAO/canopi#164`: server, public feed, extension picker). Until both ship, the registry and Canopi still speak the previous 1.x vocabulary (`supports`, `contradicts`, `is-member-of`, `direction`), so **their live output does not yet match this briefing**. Deploy order: registry first, then Canopi. The extension's new picker reaches users with its next release; the web embed picks it up on deploy.
 - **No deduplication yet.** Two submissions of the same bridge are two records, even though "the same bridge from either end" is the model. A uniqueness rule on (from anchor, relationship, to anchor) is the obvious next step.
-- **Contradiction and corroboration are logically symmetric** but modelled as pairs, so "A contradicts B" and "B contradicts A" are two bridges. A `symmetric` flag in the vocabulary would let dedupe treat them as one.
+- **Symmetric relationships and deduplication.** `contradicts` is symmetric, so "A contradicts B" and "B contradicts A" are the same bridge; a future uniqueness rule must treat both orders as one (for example by ordering the two anchors). `corroborates` is logically symmetric too but is still modelled as a pair.
 - **Registry writes are unauthenticated**, hence read-only public access.
 - **Crosswalk bridges** are specified but not stored or produced anywhere yet.
 - **Data volume is tiny:** two bridges exist. Changing vocabulary now is cheap; it gets expensive with volume.
