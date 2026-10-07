@@ -121,10 +121,10 @@ Link entities, not passages. Ends are `KnowledgeGraphNode` (`@id`, `graph`, opti
 
 ## 8. Status (2026-10-07) and known gaps
 
-The decisions are recorded in the Metaweb second-edition plan (D23, D28, D29; a D30 for the pairs change is still to be written).
+The decisions are recorded in the Metaweb second-edition plan (D23, D28, D29; a D30 for the pairs change, and the matching Chapter 11 wording, are still to be written).
 
 - **Live:** BRC-222 **2.0.0** (spec, schema, `vocabulary.json`).
-- **In flight:** the Bridge Registry change (inverse pairs, `direction` removed, database migration) is a pull request awaiting merge and a service restart; Canopi's matching change (server, feed, extension pills) is being built. Until both ship, the registry and Canopi still speak the previous 1.x vocabulary (`supports`, `contradicts`, `is-member-of`, `direction`). The extension's new pills reach users with its next release.
+- **In flight (pull requests open, not yet merged or deployed):** the Bridge Registry change (`Bridgit-DAO/bridge-registry#8`: inverse pairs, `direction` removed, in-place database migration) and Canopi's matching change (`Bridgit-DAO/canopi#164`: server, public feed, extension picker). Until both ship, the registry and Canopi still speak the previous 1.x vocabulary (`supports`, `contradicts`, `is-member-of`, `direction`), so **their live output does not yet match this briefing**. Deploy order: registry first, then Canopi. The extension's new picker reaches users with its next release; the web embed picks it up on deploy.
 - **No deduplication yet.** Two submissions of the same bridge are two records, even though "the same bridge from either end" is the model. A uniqueness rule on (from anchor, relationship, to anchor) is the obvious next step.
 - **Contradiction and corroboration are logically symmetric** but modelled as pairs, so "A contradicts B" and "B contradicts A" are two bridges. A `symmetric` flag in the vocabulary would let dedupe treat them as one.
 - **Registry writes are unauthenticated**, hence read-only public access.
