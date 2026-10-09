@@ -2,6 +2,8 @@
 
 Static site for the **BRC-222 JSON-LD schema** (OrdinalBridge). VPS checkout `/home/ubuntu/brc222.org`.
 
+> **Where the live site is served from (checked 2026-10-09): box 1 (40.160.38.189), not this VPS.** Cloudflare reads box 1's `/var/www/brc222.org`; this VPS keeps an identical, retired copy. `deploy-www.sh` and the "Deploy (operator)" steps below publish to this VPS only, so they succeed without changing the public site. To publish, use the rsync in [docs/HANDOFF-bridge-schema-thread.md](docs/HANDOFF-bridge-schema-thread.md) (section 6) and check `curl -s https://brc222.org/schema`.
+
 Harvested from Hostinger AI Builder (Sep 2026). See `docs/hostinger-harvest.md`.
 
 ## Structure

@@ -1,6 +1,6 @@
 # Handoff: the BRC-222 bridge schema thread
 
-**State as of 2026-10-09 ~19:30 UTC.** This is a snapshot for orienting a new session. It goes stale, so run the checks in section 9 before trusting any "live" claim. Read it top to bottom once; sections 5 and 6 are the working parts.
+**State as of 2026-10-09 ~19:00 UTC.** This is a snapshot for orienting a new session. It goes stale, so run the checks in section 9 before trusting any "live" claim. Read it top to bottom once; sections 5 and 6 are the working parts.
 
 For the schema itself, read `docs/briefing-bridge-schema.md` in this repo. That is the contract other projects use. This document is about the *work*: what was done, where it runs, what is open, and what bit us.
 
@@ -20,14 +20,14 @@ A multi-day change to how bridges (typed, verifiable relationships between two p
 
 | Piece | Repo | Where it runs | Notes |
 |---|---|---|---|
-| Spec site + vocabulary | `Bridgit-DAO/brc222` (this repo) | this VPS (216.238.91.120), nginx, `/var/www/brc222.org` | `bash deploy-www.sh` publishes `sites/www/` |
+| Spec site + vocabulary | `Bridgit-DAO/brc222` (this repo) | **box 1 (40.160.38.189)**, nginx, `/var/www/brc222.org` (root-owned), behind Cloudflare. **Not** box 2 (it has only `staging.brc222.org`). This VPS keeps a retired, identical copy | `deploy-www.sh` here publishes to the retired copy only. Publish with the rsync in section 6 |
 | Bridge Registry | `Bridgit-DAO/bridge-registry` | **new box 40.160.38.189** since 2026-10-08, `registry.theoverweb.org` via Cloudflare | Flask + gunicorn + SQLite. Public API is **read-only** (nginx blocks writes; `POST` has no auth) |
 | Canopi (server + extension + embed) | `Bridgit-DAO/canopi` | **new box 40.160.38.189**, pm2 `canopi-prod` etc. | Bridges are created in Canopi; the registry fills itself from Canopi's public feed |
 | The book (editorial docs) | `Bridgit-DAO/metaweb-book` | untracked copies in `/home/ubuntu/metaweb-book` | The plan and Chapter 11 redline live on branch `docs/second-edition-editorial` |
 
 **Data flow:** a person makes a bridge in Canopi (`POST /v1/bridges`) -> stored as two message rows -> Canopi's public feed (`GET /api/meta/feed?tag_type=bridge`, standard-tier key) -> the registry's sync job (every 15 min, plus an hourly full reconcile) -> registry API (`/api/v1/bridges`, BRC-222 JSON-LD at `?format=jsonld`).
 
-**Two VPSes.** This VPS ("old", `vultr`) is being decommissioned by another session. The registry and Canopi production moved to **40.160.38.189** ("box 1"). Do not assume anything runs here. See section 8.
+**Two VPSes.** This VPS ("old", `vultr`) is being decommissioned by another session. The registry and Canopi production moved to **40.160.38.189** ("box 1"). Do not assume anything runs here. See section 8. **The static site brc222.org also moved to box 1** (proven in section 8: a file written only on box 1 is served publicly, one written only here is not). Box 2 (40.160.38.190) is dev/staging and does not serve the real site.
 
 ## 3. The decisions (do not relitigate without the owner)
 
@@ -51,24 +51,18 @@ Recorded in `metaweb-book` `docs/second-edition-plan.md` as **D23, D28, D29, D30
 | brc222.org schema + vocabulary | 2.1.0 (`fce272a`) | yes |
 | Briefing for other projects | `docs/briefing-bridge-schema.md` | yes (its relationship table is generated from the vocabulary; its status section is hand-written and says everything is live except the Chrome extension, which is still accurate) |
 | Bridge Registry (box 1) | `b4c9fcc` (dedup, endorsements, confirms, likes) | yes, restarted 2026-10-09 18:17 UTC |
-| Canopi production (box 1) | `b3bb03f8` (vocabulary, pairs, Swap, confirms, feed `bridge.likes`) | yes |
+| Canopi production (box 1) | `77b9b15d` (vocabulary, pairs, Swap, confirms, feed `bridge.likes`, heart counts shared across a bridge's two rows) | yes |
 | Canopi web embed | serves the pair picker, Swap, confirms | yes (same compiled modules) |
 | Canopi migration 058 | applied to prod 2026-10-07 | yes |
 | Book: D30 + Chapter 11 redline + goldfish example | editorial branch `docs/second-edition-editorial` | yes (docs only) |
 | **Chrome extension** new picker / Swap / confirms | not released | **no** (next extension release) |
-| **In-app heart counts (canopi PR #201)** | open, CI running at time of writing | **no** (see section 5) |
+| In-app heart counts (canopi PR #201) | merged `77b9b15d`, deployed 2026-10-09; verified on the real bridge (both rows report 3) | yes |
 
-## 5. In flight, and exactly how to finish it
+## 5. Recently finished, and what is still pending
 
-### 5a. Canopi PR #201 (heart counts shown the same on both pages of a bridge)
+### 5a. Canopi PR #201 (heart counts shown the same on both pages of a bridge): done
 
-https://github.com/Bridgit-DAO/canopi/pull/201. Server only; no extension release needed. At the time of writing every check had passed except "Build, Test, And Security Gate", still running. A background watcher was set to merge it only when that gate and `check-changelog` are green (that watcher dies with its session, so **do not assume it merged**: check).
-
-To finish:
-1. `gh api repos/Bridgit-DAO/canopi/pulls/201 --jq '{state,merged}'`. If open, wait for the gate (`Build, Test, And Security Gate`) and `check-changelog` to be `success`, then merge with a merge commit. Never merge over a red gate.
-2. **Look at what else the deploy carries** (production runs `b3bb03f8`; Canopi `main` was `007e2ee1` = only PR #198, a docs handoff). `git diff --name-only <prod> origin/main | grep -E 'package(-lock)?\.json$|^prisma/|^migrations/'` must be empty, or handle those first.
-3. Deploy (section 6). No extension build is needed for this one.
-4. Verify against a real bridge: the public feed's hearted bridge should still say `likes: 3`; open the same bridge on both of its pages and confirm the same count. (Production has exactly one hearted bridge.)
+Merged (`77b9b15d`) after its checks passed and deployed to box 1 (server only; no extension release needed). Verified live on the one hearted bridge: both of its rows list 3 people (3 distinct) and report `reactionCount: 3`, where before they showed 2 and 3. The change is `lib/bridgeReactions.js` plus small edits to `routes/reactions.js` and `controllers/messagesController.js`; ordinary messages still use the old code path. Its tests include `tests/server/bridgeReactions.postgres.test.ts`, which needs a Postgres built from production's schema (setup in the file header).
 
 ### 5b. The Chrome extension release
 
@@ -98,8 +92,15 @@ Box 1 has **no GitHub access by design**. From the old VPS:
 4. Run the tests there (`.venv/bin/python -m unittest discover -s tests -t .`), then load production config and run the sync once: `set -a; . ./.env; set +a; python -m src.sync_canopi --reconcile` (**assert `SQLITE_PATH` is `/home/ubuntu/bridge-registry-data/bridges.db`** first).
 5. `sudo systemctl restart bridge-registry` on the box. `ubuntu` there has passwordless sudo.
 
-### brc222.org -> this VPS
-Edit `sites/www/vocabulary.json` (and prose in `index.html` outside the generated markers), run `python3 tools/build-vocabulary.py` (`--check` verifies), `bash deploy-www.sh`, commit and push.
+### brc222.org -> box 1 (NOT `deploy-www.sh`)
+The public site is served from **box 1**. `bash deploy-www.sh` in this repo rsyncs to `/var/www/brc222.org` on **this VPS**, which Cloudflare no longer reads, so it silently publishes nothing. Edit `sites/www/vocabulary.json` (and prose in `index.html` outside the generated markers), run `python3 tools/build-vocabulary.py` (`--check` verifies), commit, then publish to box 1, whose docroot is `root:root`:
+```bash
+rsync -rlt --delete --chown=root:root --chmod=D755,F644 \
+  --exclude='.well-known/' --exclude='._*' --exclude='.DS_Store' \
+  --rsync-path="sudo rsync" -e "ssh -i $HOME/.ssh/ovh_canopi_prod_ed25519 -o BatchMode=yes" \
+  sites/www/ ubuntu@40.160.38.189:/var/www/brc222.org/
+```
+Add `-n --itemize-changes` first to see what would change (right now: nothing). Verify with `curl -s https://brc222.org/schema` (the `version`). Keep `deploy-www.sh` in mind as a trap: it succeeds and prints "deploy complete".
 
 ### Adding a relationship (the payoff of the design)
 1. Add one entry to `sites/www/vocabulary.json`: a pair (`name`, `inverse`, labels, definitions, IRIs, aliases) or `"symmetric": true` with just `name`, `label`, `definition`, `iri`, `aliases`. Bump `version` and `dateModified`. Prefer a CiTO IRI (`http://purl.org/spar/cito/...`) when the meaning matches; otherwise `https://brc222.org/schema#<name>`.
@@ -112,7 +113,7 @@ No application code changes. This was demonstrated four times.
 
 Ordered roughly by how much it matters. None of it is started unless noted.
 
-1. **Finish PR #201** (5a).
+1. **Make the brc222.org deploy path correct.** `deploy-www.sh` and the README's "Deploy (operator)" section still describe this VPS. Decide whether to point the script at box 1 (the rsync in section 6) or add a second script; until then follow section 6. (Not changed: it is the owner's deploy process.)
 2. **Extension release** with the new bridge UI (5b). Owner's call.
 3. **Verification is not built.** The `ValidationEntry` shape exists in the schema, and the briefing describes the intended model (agents + enrolled, compensated human verifiers; signed attestations; no fees or stakes), but there is no enrollment, no attestation storage and no API. Everything "verified" in the registry is currently just a status column nothing sets. This is the largest piece of real remaining work.
 4. **Nothing uses endorsement or like counts yet** (ranking, display, verification input). Decide whether they should, and keep them separate from verification.
@@ -122,12 +123,14 @@ Ordered roughly by how much it matters. None of it is started unless noted.
 8. **Open vocabulary question:** none outstanding. (`confirms` was added; `corroborates` stays a pair.)
 9. **Production hygiene found along the way** (not fixed): `reactions` has **no foreign key to `messages`** in the production database (Prisma's model declares one, the DB does not), so deleting a message leaves its reactions behind. Worth its own look.
 10. **Live updates:** other open pages do not update live when someone reacts on a bridge's other row (realtime is per row). The next load is right.
-11. **Old VPS cleanup:** the registry copy there is disabled; its checkout, data directory and my backups remain. The owner has not asked for removal. Do not re-enable the old service.
+11. **Old VPS cleanup:** the registry copy there is disabled and the brc222.org docroot and nginx vhost there are a retired identical copy; the registry checkout, data directory and my backups also remain. The owner has not asked for removal. Do not re-enable the old service.
 12. **The book:** D30 and the Chapter 11 redline are done on the editorial branch (the goldfish example was rewritten at the owner's request). Chapter *text* is never edited directly (D25).
 
 ## 8. Gotchas and mistakes made (read before touching anything)
 
 **Confirm where a service runs before deploying.** On 2026-10-09 I deployed the likes change to the *retired* registry copy on this VPS, because I assumed that is where it ran. It had been moved to box 1 the night before and disabled here. The public API was fine throughout. Checks that would have caught it: `dig +short registry.theoverweb.org` (Cloudflare IPs, not this VPS), `systemctl is-active bridge-registry` on **both** machines, `journalctl -u bridge-registry`.
+
+**A site behind Cloudflare: DNS cannot tell you the origin, and neither can timestamps.** An earlier version of this document said brc222.org was served from this VPS, because my earlier deploys here did update the public site. At some point since (when is not recorded), Cloudflare's origin moved to box 1. Box 1's copy is identical because it was rsynced with timestamps preserved, so version, `Last-Modified` and `ETag` match on every machine, and DNS only shows Cloudflare's addresses. What settled it: write a uniquely named, harmless file in **one** machine's docroot only, fetch it through the public URL, then delete it. The file written here was a public 404 (and 200 straight to this VPS); the file written on box 1 was a public 200. Do this, and clean up, before trusting any "it is served from X" claim.
 
 **The live registry checkout must stay on `main`.** On 2026-10-07 I developed on a feature branch inside the deployed checkout; the 15-minute sync cron ran my unmerged code and migrated the production database early. Develop in a worktree (`git worktree add ../bridge-registry-dev -b name origin/main`). A guard in `deploy/scripts/sync-canopi.sh` now refuses to run off `main`, but that is a backstop.
 
@@ -162,12 +165,12 @@ curl -s https://registry.theoverweb.org/api/v1/bridges | python3 -c "import sys,
 ssh -i ~/.ssh/ovh_canopi_prod_ed25519 ubuntu@40.160.38.189 'cd ~/canopi-prod && git log --oneline -1; cd ~/bridge-registry && git log --oneline -1; systemctl is-active bridge-registry'
 # is the old registry still off? (expect inactive/disabled)
 systemctl is-active bridge-registry; systemctl is-enabled bridge-registry
-# PR 201
-gh api repos/Bridgit-DAO/canopi/pulls/201 --jq '{state,merged}'
+# the real bridge's two rows should report the same reactionCount (both 3); ids via a read-only query on the prod DB
+# which machine Cloudflare reads for brc222.org: see section 8 (probe file), not DNS
 # Canopi main CI
 gh api repos/Bridgit-DAO/canopi/commits/main/check-runs --jq '.check_runs[]|"\(.conclusion//.status)\t\(.name)"'
 ```
-Expected at time of writing: schema `2.1.0`; registry `2` bridges (`contradicts`, 1 endorsement each, likes 3 and 0); Canopi `b3bb03f8` and registry `b4c9fcc` on box 1; old registry `inactive`/`disabled`; every check that ran on Canopi `main` green (`007e2ee1` is a docs-only commit, so the test gate did not run for it; the last code commit's gate was green).
+Expected at time of writing: schema `2.1.0`; registry `2` bridges (`contradicts`, 1 endorsement each, likes 3 and 0); Canopi `77b9b15d` and registry `b4c9fcc` on box 1; old registry `inactive`/`disabled`; every check that ran on Canopi `main` green (`007e2ee1` is a docs-only commit, so the test gate did not run for it; the last code commit's gate was green).
 
 ## 10. Working with the owner
 
