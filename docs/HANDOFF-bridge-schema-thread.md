@@ -21,7 +21,7 @@ A multi-day change to how bridges (typed, verifiable relationships between two p
 | Piece | Repo | Where it runs | Notes |
 |---|---|---|---|
 | Spec site + vocabulary | `Bridgit-DAO/brc222` (this repo) | **box 1 (40.160.38.189)**, nginx, `/var/www/brc222.org` (root-owned), behind Cloudflare. **Not** box 2 (it has only `staging.brc222.org`). This VPS keeps a retired, identical copy | `deploy-www.sh` here publishes to the retired copy only. Publish with the rsync in section 6 |
-| Bridge Registry | `Bridgit-DAO/bridge-registry` | **new box 40.160.38.189** since 2026-10-08, `registry.theoverweb.org` via Cloudflare | Flask + gunicorn + SQLite. Public API is **read-only** (nginx blocks writes; `POST` has no auth) |
+| Bridge Registry | `Bridgit-DAO/bridge-registry` | **new box 40.160.38.189** since 2026-10-08, via Cloudflare. Canonical name `registry.brc222.org` since 2026-11-15; `registry.theoverweb.org` serves the same service during the transition | Flask + gunicorn + SQLite. Public API is **read-only** (nginx blocks writes; `POST` has no auth) |
 | Canopi (server + extension + embed) | `Bridgit-DAO/canopi` | **new box 40.160.38.189**, pm2 `canopi-prod` etc. | Bridges are created in Canopi; the registry fills itself from Canopi's public feed |
 | The book (editorial docs) | `Bridgit-DAO/metaweb-book` | untracked copies in `/home/ubuntu/metaweb-book` | The plan and Chapter 11 redline live on branch `docs/second-edition-editorial` |
 
