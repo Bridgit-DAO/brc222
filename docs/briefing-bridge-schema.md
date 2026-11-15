@@ -113,7 +113,7 @@ Link entities, not passages. Ends are `KnowledgeGraphNode` (`@id`, `graph`, opti
 | Spec page and definitions | https://brc222.org |
 | JSON-LD context | https://brc222.org/schema (also `/schema.json`) |
 | Vocabulary (source of truth) | https://brc222.org/vocabulary.json |
-| Bridge Registry (read-only public API) | https://registry.theoverweb.org/api/v1/ |
+| Bridge Registry (open, public API; writes need a token) | https://registry.brc222.org/api/v1/ (canonical since 15 Nov 2026; registry.theoverweb.org serves the same database during the transition, then becomes the Overweb verified registry) |
 | Canopi (where people make bridges) | `POST /v1/bridges` at https://api.canopi.live, signed-in users only |
 | Canopi public feed (bridge posts) | `GET https://api.canopi.live/api/meta/feed?tag_type=bridge` |
 
