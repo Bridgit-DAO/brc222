@@ -42,7 +42,8 @@
     "signature": "https://brc222.org/schema#signature",
     "exact": "https://brc222.org/schema#exact",
     "prefix": "https://brc222.org/schema#prefix",
-    "suffix": "https://brc222.org/schema#suffix"
+    "suffix": "https://brc222.org/schema#suffix",
+    "inscriptionId": "https://brc222.org/schema#inscriptionId"
   },
   "@type": "DefinedTermSet",
   "name": "BRC-222 OrdinalBridge JSON-LD Schema",
