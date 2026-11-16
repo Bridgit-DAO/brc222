@@ -34,6 +34,7 @@ There are two kinds:
 
 - `from` is the **claim** (or the thing being described); `to` is the related material. `@type` of an end may be `WebPage`, `Video`, `Image`, `Audio`, `DigitalArtifact`, `Inscription`, `Sat` or `Claim`.
 - `@id` of the bridge is the inscription if there is one, otherwise any stable IRI.
+- `inscriptionId` (2.2.0, optional): the inscription `<txid>i<n>` that holds the bridge. The inscription body is the bridge's JSON-LD (`application/ld+json`, one `OrdinalBridge` or a `@graph`), without its own `@id`; it is that bridge when it has the same two ends (URL + selector) and the same canonical relationship. Registries show a claimed inscription as **asserted** until they have **proven** it from chain data; only a proven one becomes `@id`. See https://brc222.org/#inscribed.
 - **There is no `direction` field.** Version 2.0.0 removed it. If you find code that sends or expects one, it predates 2.0.0.
 
 ## 3. Relationships: inverse pairs
