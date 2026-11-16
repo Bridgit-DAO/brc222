@@ -15,6 +15,7 @@
     <nav aria-label="Primary">
       <a href="/">Schema</a>
       <a href="/schema.json">JSON</a>
+      <a href="https://registry.brc222.org/api/v1/bridges">Registry</a>
       <a href="https://bridgit.io">Bridgit</a>
     </nav>
   </header>
@@ -86,7 +87,7 @@
     <li><strong>Content bridges</strong> (<code>OrdinalBridge</code>) link a passage or region in one piece of content to another, with a typed <a href="#relationships">relationship</a>.</li>
     <li><strong>Crosswalk bridges</strong> (<code>CrosswalkBridge</code>) link a node in one knowledge graph to the matching node in another, so the two graphs can be traversed as one map. See <a href="#crosswalk">Crosswalk Bridges</a>.</li>
   </ul>
-  <p class="note">Version 2.0.0 (2026-10-07). Relationships come in inverse pairs, and <code>direction</code> is gone. See the <a href="#changelog">changelog</a>.</p>
+  <p class="note">Version 2.2.0 (2026-11-16). Relationships come in inverse pairs, and <code>direction</code> is gone; an inscribed bridge carries <code>inscriptionId</code>. See the <a href="#changelog">changelog</a>.</p>
 
   <h2>@context</h2>
   <pre><code>"@context": "https://brc222.org/schema"</code></pre>
@@ -107,6 +108,7 @@
   <ul>
     <li><code>@type</code> (string): Fixed value "OrdinalBridge"</li>
     <li><code>@id</code> (string): Unique identifier. For an inscribed bridge this is the inscription (e.g., <code>bitcoin:inscription:abc123</code>), assigned at the time of inscription. Inscription is optional; a bridge that is not inscribed uses any stable IRI, such as its registry URL.</li>
+    <li><code>inscriptionId</code> (string, optional, 2.2.0): The Bitcoin inscription that holds this bridge, <code>&lt;txid&gt;i&lt;index&gt;</code> (64 lower-case hex characters, <code>i</code>, a decimal index). When present, <code>@id</code> is <code>bitcoin:inscription:&lt;inscriptionId&gt;</code>. See <a href="#inscribed">Inscribed bridges</a>.</li>
     <li><code>from</code> (object): Describes the source artifact</li>
     <li><code>to</code> (object): Describes the target artifact</li>
     <li><code>relationship</code> (string): Semantic link type, one of the names in the <a href="#relationships">relationship table</a>, either form of a pair. Expands to an IRI, using <a href="http://purl.org/spar/cito/" target="_blank" rel="noopener noreferrer">CiTO</a> where its meaning matches.</li>
@@ -181,6 +183,15 @@
 }</code></pre>
   <p>Signed attestations from verifiers. Verification covers two things: that each end (each context anchor) points to the content it claims, and that the relationship holds. Each entry records who verified the bridge and when. Entries are optional; a bridge with none is unverified.</p>
 
+  <h2 id="inscribed">Inscribed bridges</h2>
+  <p>Inscribing a bridge on Bitcoin is optional. An inscribed bridge's inscription content is the bridge itself:</p>
+  <ul>
+    <li><strong>Content type</strong> <code>application/ld+json</code> (or <code>application/json</code>); a <code>charset=utf-8</code> parameter is allowed. Content encodings <code>gzip</code> and <code>deflate</code> are read.</li>
+    <li><strong>Body</strong>: UTF-8 JSON, one <code>OrdinalBridge</code> object, or several in a <code>@graph</code> array (a batch). The body cannot contain its own inscription id, so <code>@id</code> and <code>inscriptionId</code> are left out of it; if present, they must name this inscription.</li>
+    <li><strong>What must match.</strong> An inscription is a given bridge when one entry makes the same claim: the same two ends (each end's <code>@id</code> and its <code>content</code> selector: <code>TextQuoteSelector</code> <code>exact</code>, <code>prefix</code>, <code>suffix</code>, or <code>ImageObject</code> <code>url</code>, or none for a whole page) and the same relationship once resolved to its canonical form (an inverse name turns the ends around; a symmetric relationship reads the same either way). The explanation is not part of the claim.</li>
+  </ul>
+  <p>A registry that carries <code>inscriptionId</code> distinguishes an <strong>asserted</strong> inscription (someone authorised says the bridge is inscribed as X) from a <strong>proven</strong> one (the registry read the inscription from chain data, checked it against the transaction and the output it spends, and found it makes the bridge's claim, with enough confirmations). Only a proven inscription should be published as the bridge's <code>@id</code>. When several bridges answer a lookup, proven-inscribed bridges can be listed first, then asserted ones, then the rest, without hiding any.</p>
+
   <h2 id="crosswalk">Crosswalk Bridges</h2>
   <p>A crosswalk bridge links a node in one knowledge graph to the matching node in another, for example a Wikidata item and the matching record in a library or scientific database. Crosswalks connect entities rather than passages, so their ends are <code>KnowledgeGraphNode</code> objects and their link is a <code>match</code> rather than a <code>relationship</code>.</p>
   <pre><code>{
@@ -233,6 +244,7 @@
 
   <h2 id="changelog">Changelog</h2>
   <ul>
+    <li><strong>2.2.0</strong> (2026-11-16): adds the optional <code>inscriptionId</code> term and defines <a href="#inscribed">inscribed bridges</a> (content type, body, what must match; asserted and proven). Relationships unchanged. Backward compatible.</li>
     <li><strong>2.1.0</strong> (2026-10-07): adds <code>isConfirmedBy</code> / <code>confirms</code> (the target settles the source as true: a primary record, a replication or a decisive check). Backward compatible.</li>
     <li><strong>2.0.0</strong> (2026-10-07): relationships come in inverse pairs (<code>isSupportedBy</code> and <code>supports</code> are one bridge), or are symmetric (<code>contradicts</code>: contradiction is mutual, so it has no passive form); <code>direction</code> removed; <code>contextualizes</code> replaced by <code>qualifies</code> / <code>isQualifiedBy</code>; <code>corroborates</code> gains an inverse; <code>is-member-of</code> becomes <code>isMemberOf</code>; <code>relationship</code> expands to an IRI (CiTO where it matches); the vocabulary is published at <a href="/vocabulary.json">/vocabulary.json</a>. Breaking.</li>
     <li><strong>1.3.0</strong> (2026-10-07): removed <code>amplifies</code>; whether one text gave another more reach cannot be judged from the passages themselves.</li>

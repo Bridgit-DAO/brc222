@@ -63,7 +63,8 @@
     "signature": "https://brc222.org/schema#signature",
     "exact": "https://brc222.org/schema#exact",
     "prefix": "https://brc222.org/schema#prefix",
-    "suffix": "https://brc222.org/schema#suffix"
+    "suffix": "https://brc222.org/schema#suffix",
+    "inscriptionId": "https://brc222.org/schema#inscriptionId"
   },
   "@type": "DefinedTermSet",
   "name": "BRC-222 OrdinalBridge JSON-LD Schema",
@@ -83,6 +84,6 @@
     "relatedMatch"
   ],
   "vocabulary": "https://brc222.org/vocabulary.json",
-  "version": "2.1.0",
-  "dateModified": "2026-10-07"
+  "version": "2.2.0",
+  "dateModified": "2026-11-16"
 }
